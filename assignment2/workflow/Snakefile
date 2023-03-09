@@ -1,0 +1,87 @@
+"""Snakefile for analysing variants"""
+
+
+SAMPLES = ["A", "B", "C", "D"]
+
+rule all:
+    input:
+        "results/out.html"
+    shell:
+        "snakemake -c4 results/out.html --dag | dot -Tpng > images/dag.png"
+
+
+rule bwa_map:
+    input:
+        "data/genome.fa",
+        "data/samples/{sample}.fastq"
+    output:
+        "results/mapped_reads/{sample}.bam"
+    message: "Executing bwa mem on the following {input} to generate the following {output}"
+    shell:
+        "bwa mem {input} | samtools view -Sb - > {output}"
+
+
+rule samtools_sort:
+    input:
+        "results/mapped_reads/{sample}.bam"
+    output:
+        "results/sorted_reads/{sample}.bam"
+    message: "Executing sorting on {input} to generate {output}"
+    shell:
+        "samtools sort -T results/sorted_reads/{wildcards.sample} "
+        "-O bam {input} > {output}"
+
+rule samtools_index:
+    input:
+        "results/sorted_reads/{sample}.bam"
+    output:
+        "results/sorted_reads/{sample}.bam.bai"
+    message: "Executing indexing on {input} to create {output}"
+    shell:
+        "samtools index {input}"
+
+rule bcftools_call:
+    input:
+        fa = "data/genome.fa",
+        bam = expand("results/sorted_reads/{sample}.bam", sample=SAMPLES)
+    output:
+        "results/calls/all.vcf"
+    message: "Executing BCFcall on {input.bam} with {input.fa} to generate calls {output}"
+    shell:
+        "samtools mpileup -g -f {input.fa} {input.bam} | bcftools call -mv - > {output}"
+
+rule report:
+    input:
+        "results/calls/all.vcf"
+    output:
+        "results/out.html"
+    message: "Rendering a report from {input}, to create the report: {output}"
+    run:
+        from snakemake.utils import report
+
+        with open(input[0]) as f:
+            n_calls = sum(1 for line in f if not line.startswith("#"))
+
+            report("""
+            An example workflow
+            ===============================
+            
+            Reads were mapped to the Yeast reference 
+            genome and variants were called jointly 
+            with SAMtools/BCFtools.
+            
+            This resulted in {n_calls} variants (see Table T1_).
+            """, output[0], metadata="Author: P.visser", T1=input[0])
+
+rule create_dag:
+    output:
+        "images/dag.png"
+    message: "Creating a workflow DAG, stored in {output}"
+    shell:
+        "snakemake -c4 results/out.html --dag | dot -Tpng > images/dag.png"
+
+rule clean:
+    message: "Deleting all generated output to get a clean start"
+    shell:
+        "rm -rf results/*"
+
