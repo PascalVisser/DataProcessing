@@ -12,7 +12,7 @@ This repository has a couple of supporting file and directories with the assignm
 |workflow     |contains Snakemake file             |
 
 ## About the Directory
-This directory contains files and subfoldesr for using and executing assignment 1. 
+This directory contains files and subfolders for using and executing assignment 1. 
 
 
 ## Usage 
