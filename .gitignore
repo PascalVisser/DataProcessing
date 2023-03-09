@@ -6,6 +6,7 @@
 
 ###snakemake###
 /.snakemake
+/.snakemake/
 
 ### Python ###
 # Byte-compiled / optimized / DLL files
