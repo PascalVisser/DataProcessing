@@ -83,5 +83,5 @@ rule create_dag:
 rule clean:
     message: "Deleting all generated output to get a clean start"
     shell:
-        "rm -rf results/*"
+        "rm -rf results/"
 
