@@ -5,8 +5,9 @@
 /project_venv
 
 ###snakemake###
+.snakemake
 /.snakemake
-/.snakemake
+/.snakemake/
 
 ### Python ###
 # Byte-compiled / optimized / DLL files
