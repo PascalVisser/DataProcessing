@@ -1,0 +1,44 @@
+import os
+
+from snakemake.remote.NCBI import RemoteProvider as NCBIRemoteProvider
+NCBI = NCBIRemoteProvider(email="p.visser@st.hanze.nl")
+
+url = 'https://bioinf.nl/~fennaf/snakemake/test.txt'
+ncbi_file = "KY785484.1.fasta"
+
+rule all:
+    input:
+        "../results/test.txt",
+        "../results/test.fasta"
+
+rule download_http:
+    output:
+        "../results/test.txt"
+    message: "input in being dowloaded from {url}"
+    shell:
+        "wget -P ../results/ {url}"
+
+rule download_NCBI:
+    input:
+        NCBI.remote({ncbi_file}, db="nuccore")
+    output:
+        "../results/test.fasta"
+    message: "NCBI file {ncbi_file} is being downloaded to {output}"
+    shell:
+        "mv {input} {output}"
+
+rule make_dag:
+    output:
+        "../images/dag.png"
+    message: "DAG scheme is created and saved to {output}"
+    shell:
+        "snakemake -c4 --dag | dot -Tpng > ../images/dag.png"
+
+
+rule clean:
+    shell:
+        "rm -rf ../results"
+
+
+
+
