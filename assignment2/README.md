@@ -6,6 +6,7 @@ This repository has a couple of supporting file and directories with the assignm
 
 |Directory    |Contains                            |
 |---          |---                                 |
+|config       |Contains configuration file         |
 |data         |data files                          |
 |images       |DAG image                           |
 |results      |output folder of maps/sorts         |
