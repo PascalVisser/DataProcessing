@@ -1,44 +1,24 @@
-import os
+configfile: "config/config.yaml"
 
-from snakemake.remote.NCBI import RemoteProvider as NCBIRemoteProvider
-NCBI = NCBIRemoteProvider(email="p.visser@st.hanze.nl")
-
-url = 'https://bioinf.nl/~fennaf/snakemake/test.txt'
-ncbi_file = "KY785484.1.fasta"
 
 rule all:
     input:
-        "../results/test.txt",
-        "../results/test.fasta"
-
-rule download_http:
-    output:
-        "../results/test.txt"
-    message: "input in being dowloaded from {url}"
-    shell:
-        "wget -P ../results/ {url}"
-
-rule download_NCBI:
-    input:
-        NCBI.remote({ncbi_file}, db="nuccore")
-    output:
-        "../results/test.fasta"
-    message: "NCBI file {ncbi_file} is being downloaded to {output}"
-    shell:
-        "mv {input} {output}"
+        "results/test.txt",
+        "results/test.fasta",
+        "results/merged_files.bam"
 
 rule make_dag:
     output:
-        "../images/dag.png"
-    message: "DAG scheme is created and saved to {output}"
+        "images/dag.png"
     shell:
-        "snakemake -c4 --dag | dot -Tpng > ../images/dag.png"
-
+        "snakemake -c4 --dag | dot -Tpng > images/dag.png"
 
 rule clean:
     shell:
-        "rm -rf ../results"
+        "rm -rf results/"
 
 
-
+include: "rules/download_http.smk"
+include: "rules/download_ncbi.smk"
+include: "rules/merge.smk"
 
