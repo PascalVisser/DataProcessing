@@ -12,8 +12,7 @@ This repository has a couple of supporting file and directories with the assignm
 |workflow              |Contains Snakemake file, with rules subfolder  |
 |---                   |                                               |
 |Files                 |                                               |
-|---                   |                                               |
-|questions_answers.txt | Answer to exercise questions         |
+|questions_answers.txt | Answer to exercise questions                  |
 
 ## About the Directory
 This directory contains files and subfolders for using and executing assignment 3. 
